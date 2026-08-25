@@ -1,0 +1,24 @@
+{
+  "name": "Dr-Diary — Doctor Visit Planner",
+  "short_name": "Dr-Diary",
+  "description": "Day-wise and area-wise doctor visit diary. Works offline, data stays on your device.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f1f5f9",
+  "theme_color": "#0f766e",
+  "lang": "en-IN",
+  "categories": ["productivity", "medical", "business"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Aaj ka plan", "short_name": "Today", "url": "./index.html#/" },
+    { "name": "Days", "url": "./index.html#/days" },
+    { "name": "Areas", "url": "./index.html#/areas" }
+  ]
+}
