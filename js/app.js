@@ -250,6 +250,63 @@
 
   document.getElementById('btn-theme').addEventListener('click', cycleTheme);
 
+  /* ---------- install ---------- */
+
+  /**
+   * Chrome and Edge fire `beforeinstallprompt` and let us trigger the install
+   * dialog ourselves. iOS Safari never fires it — there the only route is the
+   * Share sheet, so we show the same button and explain that instead.
+   */
+  var installEvent = null;
+  var installBtn = document.getElementById('btn-install');
+
+  function isStandalone() {
+    return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  }
+
+  function isIOS() {
+    return /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+      // iPadOS reports as a Mac, but a Mac has no touch points.
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  }
+
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();          // keep Chrome's own banner out of the way
+    installEvent = e;
+    if (!isStandalone()) installBtn.hidden = false;
+  });
+
+  window.addEventListener('appinstalled', function () {
+    installEvent = null;
+    installBtn.hidden = true;
+    toast('Installed — open it from your home screen');
+  });
+
+  installBtn.addEventListener('click', function () {
+    if (installEvent) {
+      installEvent.prompt();
+      installEvent.userChoice.then(function (res) {
+        if (res.outcome === 'accepted') installBtn.hidden = true;
+        installEvent = null;     // the event is single-use
+      });
+      return;
+    }
+    openModal('Add to Home Screen',
+      '<p class="hint" style="margin-top:0">Install Dr-Diary so it opens from your home screen ' +
+      'like any other app, and works without internet.</p>' +
+      (isIOS()
+        ? '<ol class="steps"><li>Tap the <b>Share</b> button at the bottom of Safari</li>' +
+          '<li>Scroll down and tap <b>Add to Home Screen</b></li>' +
+          '<li>Tap <b>Add</b></li></ol>'
+        : '<ol class="steps"><li>Open the browser menu (<b>⋮</b>)</li>' +
+          '<li>Tap <b>Install app</b> or <b>Add to Home screen</b></li></ol>') +
+      '<button class="btn primary wide" data-close="1">Got it</button>');
+  });
+
+  // Already installed, or a browser that will never prompt: keep it hidden.
+  if (isStandalone()) installBtn.hidden = true;
+  else if (isIOS()) installBtn.hidden = false;
+
   // The headline way to add a doctor: point the camera at their card.
   document.getElementById('btn-scan').addEventListener('click', function () { startScan(null); });
 
@@ -892,7 +949,7 @@
       }).join('') + '</tbody></table></div>';
 
     host.innerHTML =
-      '<div class="warnbox"><b>' + V.h(pending.fileName) + '</b> — ' + docs.length + ' doctors, ' +
+      '<div class="warnbox"><b>' + V.h(pending.fileName) + '</b> — ' + plural(docs.length, 'contact') + ', ' +
         withMobile + ' with a mobile, ' + withDay + ' already have a day set.</div>' +
       '<details' + (keepMapping ? ' open' : '') + ' class="anyblock" style="margin:0 0 12px">' +
         '<summary>Column mapping ' + (keepMapping ? '' : '(auto-detected — tap to change)') + '</summary>' +

@@ -210,7 +210,7 @@
 
       (st.unscheduled
         ? '<section class="section"><div class="warnbox">' +
-            '<b>' + plural(st.unscheduled, 'contact') + '</b> have no day or time set yet — ' +
+            '<b>' + plural(st.unscheduled, 'contact') + '</b> ' + (st.unscheduled === 1 ? 'has' : 'have') + ' no day or time set yet — ' +
             '<a href="#/doctors?filter=noday">set them here</a> so they show up in the day views.' +
           '</div></section>'
         : '') +
