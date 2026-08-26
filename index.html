@@ -9,7 +9,7 @@
 <meta name="color-scheme" content="light dark">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Dr-Diary">
 <link rel="stylesheet" href="css/app.css">
@@ -22,6 +22,10 @@
     <span class="brand-text">Dr<span class="brand-dash">-</span>Diary</span>
   </a>
   <div class="topbar-actions">
+    <!-- Shown only when the browser offers an install prompt, or on iOS where
+         it never does and we explain the Share-sheet route instead. -->
+    <button id="btn-install" class="icon-btn install" title="Install this app"
+            aria-label="Install this app" hidden>⬇</button>
     <button id="btn-theme" class="icon-btn" title="Light / dark" aria-label="Toggle theme">◐</button>
   </div>
 </header>

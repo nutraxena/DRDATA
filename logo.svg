@@ -1,27 +1,38 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Dr-Diary">
+  <title>Dr-Diary</title>
   <defs>
-    <linearGradient id="ddg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#14b8a6"/>
-      <stop offset="1" stop-color="#4f46e5"/>
+    <linearGradient id="dd-bg" x1="0" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="#16c0ae"/>
+      <stop offset=".45" stop-color="#0d9488"/>
+      <stop offset="1" stop-color="#4338ca"/>
+    </linearGradient>
+    <linearGradient id="dd-page" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eef2f7"/>
     </linearGradient>
   </defs>
-  <!-- diary cover -->
-  <rect x="12" y="6" width="42" height="52" rx="6" fill="url(#ddg)"/>
-  <!-- page block -->
-  <rect x="18" y="11" width="31" height="42" rx="3" fill="#ffffff" opacity=".95"/>
-  <!-- spine + rings -->
-  <rect x="8" y="6" width="9" height="52" rx="4.5" fill="#0f766e"/>
-  <g fill="#ffffff" opacity=".85">
-    <circle cx="12.5" cy="17" r="2.1"/>
-    <circle cx="12.5" cy="32" r="2.1"/>
-    <circle cx="12.5" cy="47" r="2.1"/>
-  </g>
-  <!-- pulse line across the page: the diary is a visit log -->
-  <path d="M21 34 h6 l3-8 4 15 3.5-9 2.5 4 h6"
-        fill="none" stroke="#e11d48" stroke-width="2.6"
+
+  <!-- App-icon plate. A filled shape survives being scaled to 16px; an outline
+       drawing does not. -->
+  <rect width="64" height="64" rx="15" fill="url(#dd-bg)"/>
+  <!-- soft top-left sheen -->
+  <path d="M0 15A15 15 0 0 1 15 0h34C30 10 14 24 6 42Z" fill="#ffffff" opacity=".13"/>
+
+  <!-- Diary: dark spine on the left, white page block to its right. Only two
+       shapes, so the silhouette stays legible when tiny. -->
+  <rect x="12" y="12.5" width="8.5" height="39" rx="3.2" fill="#0b5f57"/>
+  <rect x="19" y="12.5" width="33" height="39" rx="4.5" fill="url(#dd-page)"/>
+
+  <!-- Heartbeat across the page — the one detail that says "medical visit log".
+       Kept thick so it still reads at favicon size. -->
+  <path d="M24.5 35.5h4.6l3-9.5 4.6 17 3.4-10 2.3 4.6h4.2"
+        fill="none" stroke="#e11d48" stroke-width="3.6"
         stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- medical cross -->
-  <path d="M33 15.5v7M29.5 19h7" stroke="#4f46e5" stroke-width="2.6" stroke-linecap="round"/>
-  <!-- ruled line under the pulse -->
-  <path d="M21 45h25" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+
+  <!-- Rings, punched through the spine into the page edge. -->
+  <g fill="#ffffff" opacity=".9">
+    <circle cx="16.2" cy="21" r="1.9"/>
+    <circle cx="16.2" cy="32" r="1.9"/>
+    <circle cx="16.2" cy="43" r="1.9"/>
+  </g>
 </svg>
