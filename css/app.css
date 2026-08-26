@@ -1,0 +1,645 @@
+/* Dr-Diary — mobile-first, light/dark aware. No framework, no build step. */
+
+:root {
+  --teal: #0f766e;
+  --teal-600: #0d9488;
+  --indigo: #4f46e5;
+  --rose: #e11d48;
+  --amber: #b45309;
+  --green: #15803d;
+
+  --bg: #f1f5f9;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --muted: #64748b;
+  --chip: #e2e8f0;
+  --chip-text: #334155;
+  --shadow: 0 1px 2px rgba(15,23,42,.06), 0 4px 12px rgba(15,23,42,.06);
+
+  --radius: 14px;
+  --tap: 44px;
+  --maxw: 900px;
+}
+
+html[data-theme="dark"] {
+  --bg: #0b1220;
+  --surface: #131c2e;
+  --surface-2: #0f1829;
+  --border: #24334d;
+  --text: #e8eef8;
+  --muted: #93a4bd;
+  --chip: #1e2b42;
+  --chip-text: #c7d5ea;
+  --teal: #2dd4bf;
+  --teal-600: #14b8a6;
+  --indigo: #818cf8;
+  --rose: #fb7185;
+  --amber: #fbbf24;
+  --green: #4ade80;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.35);
+}
+
+* { box-sizing: border-box; }
+
+/* The UA gives [hidden] display:none, but any author `display` rule beats it —
+   .modal and .lightbox set display:flex and would otherwise sit over the page
+   permanently. Keep this above the components that toggle `hidden`. */
+[hidden] { display: none !important; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  padding-bottom: calc(66px + env(safe-area-inset-bottom));
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; }
+
+/* ---------- top bar ---------- */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: calc(10px + env(safe-area-inset-top)) 14px 10px;
+  background: linear-gradient(135deg, var(--teal) 0%, var(--indigo) 100%);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(15,23,42,.18);
+}
+
+.brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.brand img { display: block; border-radius: 8px; background: #fff; padding: 2px; flex: none; }
+.brand-text { font-size: 1.22rem; font-weight: 750; letter-spacing: .2px; }
+.brand-dash { opacity: .6; margin: 0 1px; }
+
+.topbar-actions { display: flex; gap: 6px; flex: none; }
+
+.icon-btn {
+  min-width: var(--tap);
+  height: var(--tap);
+  border: 0;
+  border-radius: 12px;
+  background: rgba(255,255,255,.16);
+  color: #fff;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.icon-btn:active { background: rgba(255,255,255,.3); }
+
+/* ---------- search ---------- */
+
+.searchwrap {
+  position: sticky;
+  top: calc(64px + env(safe-area-inset-top));
+  z-index: 25;
+  padding: 10px 14px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Search, scan and add sit on one row: 🔍 … 📷 ➕ */
+.searchrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+
+.round-btn {
+  flex: none;
+  width: 46px; height: 46px;
+  border: 0; border-radius: 50%;
+  color: #fff; font-size: 1.25rem; line-height: 1;
+  cursor: pointer; box-shadow: var(--shadow);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.round-btn:active { transform: scale(.94); }
+.round-btn.scan { background: linear-gradient(135deg, var(--teal-600), var(--teal)); }
+.round-btn.add  { background: linear-gradient(135deg, var(--indigo), #6366f1); font-size: 1.7rem; font-weight: 300; }
+html[data-theme="dark"] .round-btn { color: #08131f; }
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  padding: 0 12px;
+  height: 46px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  color: var(--muted);
+}
+.search:focus-within { border-color: var(--teal-600); box-shadow: 0 0 0 3px rgba(13,148,136,.18); }
+
+.search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 1rem;
+}
+.search input::-webkit-search-cancel-button { display: none; }
+
+.q-clear {
+  border: 0; background: transparent; color: var(--muted);
+  font-size: 1.5rem; line-height: 1; cursor: pointer; padding: 0 4px;
+}
+
+/* ---------- layout ---------- */
+
+.app { max-width: var(--maxw); margin: 0 auto; padding: 14px; outline: none; }
+
+.section { margin-bottom: 22px; }
+.section-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 10px; margin: 0 2px 10px;
+}
+.section-head h2 { margin: 0; font-size: .82rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+.section-head a { font-size: .85rem; color: var(--teal-600); font-weight: 600; }
+
+.page-title { margin: 2px 2px 14px; font-size: 1.35rem; font-weight: 750; }
+.page-sub { color: var(--muted); font-size: .9rem; font-weight: 500; margin-left: 8px; }
+
+.backlink { display: inline-flex; align-items: center; gap: 6px; color: var(--teal-600); font-weight: 600; font-size: .9rem; margin-bottom: 10px; }
+
+/* ---------- stats ---------- */
+
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.stat {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 12px 8px; text-align: center; box-shadow: var(--shadow);
+}
+.stat b { display: block; font-size: 1.35rem; line-height: 1.1; }
+.stat span { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.stat.warn b { color: var(--amber); }
+
+/* ---------- day chips ---------- */
+
+.daygrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+@media (min-width: 620px) { .daygrid { grid-template-columns: repeat(8, 1fr); } }
+
+.daychip {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; min-height: 62px; padding: 8px 4px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); cursor: pointer;
+}
+.daychip strong { font-size: .95rem; }
+.daychip em { font-style: normal; font-size: .72rem; color: var(--muted); }
+.daychip.today { border-color: var(--teal-600); background: linear-gradient(180deg, rgba(13,148,136,.12), transparent); }
+.daychip.today strong { color: var(--teal-600); }
+.daychip.zero { opacity: .55; }
+.daychip:active { transform: scale(.97); }
+
+/* ---------- cards ---------- */
+
+.card {
+  display: block;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 12px 14px; margin-bottom: 9px;
+}
+.card:active { background: var(--surface-2); }
+
+.card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.card-name { font-weight: 700; font-size: 1rem; line-height: 1.25; }
+.card-meta { color: var(--muted); font-size: .84rem; margin-top: 3px; }
+.card-meta .dot { opacity: .5; margin: 0 5px; }
+
+.timebadge {
+  flex: none; display: inline-flex; align-items: center; gap: 4px;
+  background: var(--teal); color: #fff; border-radius: 999px;
+  padding: 4px 10px; font-size: .8rem; font-weight: 700; white-space: nowrap;
+}
+.timebadge.any { background: var(--chip); color: var(--chip-text); }
+
+.tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.tag {
+  background: var(--chip); color: var(--chip-text); border-radius: 999px;
+  padding: 2px 9px; font-size: .74rem; font-weight: 600;
+}
+.tag.area { background: rgba(79,70,229,.14); color: var(--indigo); }
+.tag.day  { background: rgba(13,148,136,.16); color: var(--teal-600); }
+.tag.visit { background: rgba(21,128,61,.14); color: var(--green); }
+.tag.nodays { background: rgba(180,83,9,.14); color: var(--amber); }
+
+/* ---------- action row ---------- */
+
+/* 2x2 on a phone — four across at 375px squeezes "WhatsApp" onto two lines. */
+.actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; margin-top: 10px; }
+@media (min-width: 520px) { .actions { grid-template-columns: repeat(4, 1fr); } }
+.act {
+  min-height: 38px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2);
+  font-size: .82rem; font-weight: 650; cursor: pointer; padding: 0 8px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.act:active { transform: scale(.97); }
+.act.wa { color: var(--green); }
+.act.edit { color: var(--teal-600); }
+.act.map { color: var(--indigo); }
+.act.done { color: var(--amber); }
+.act.done.is-done { background: rgba(21,128,61,.14); color: var(--green); border-color: transparent; }
+.act[disabled] { opacity: .4; pointer-events: none; }
+
+/* ---------- buttons ---------- */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  min-height: var(--tap); padding: 0 18px;
+  border: 1px solid var(--border); border-radius: 12px;
+  background: var(--surface); font-weight: 650; cursor: pointer;
+}
+.btn.primary { background: var(--teal); border-color: var(--teal); color: #fff; }
+.btn.danger { color: var(--rose); border-color: rgba(225,29,72,.35); }
+.btn.wide { width: 100%; }
+.btn:active { transform: scale(.98); }
+
+.btnrow { display: flex; gap: 8px; flex-wrap: wrap; }
+.btnrow > .btn { flex: 1 1 140px; }
+
+/* ---------- view toggle: list / details / icon ---------- */
+
+.viewtoggle {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
+  background: var(--chip); border-radius: 12px; padding: 4px; margin-bottom: 10px;
+}
+.vt {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 38px; border: 0; border-radius: 9px; background: transparent;
+  color: var(--chip-text); font-size: .82rem; font-weight: 650; cursor: pointer;
+}
+.vt.on { background: var(--surface); color: var(--teal-600); box-shadow: var(--shadow); }
+.vt-ico { font-size: 1rem; line-height: 1; }
+
+/* Status icons next to a doctor's name. */
+.markers { margin-left: 6px; white-space: nowrap; }
+.markers .mk { font-size: .82rem; margin-left: 2px; }
+
+/* ---------- list view ---------- */
+
+.doclist {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
+}
+.docrow {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 11px 14px; min-height: var(--tap);
+  border-bottom: 1px solid var(--border); cursor: pointer;
+}
+.docrow:last-child { border-bottom: 0; }
+.docrow:active { background: var(--surface-2); }
+.docrow-main { min-width: 0; }
+.docrow-name { font-weight: 650; font-size: .95rem; line-height: 1.25; }
+.docrow-sub {
+  color: var(--muted); font-size: .8rem; margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.docrow-when { flex: none; text-align: right; }
+.when-day {
+  display: inline-block; background: rgba(13,148,136,.16); color: var(--teal-600);
+  border-radius: 999px; padding: 3px 9px; font-size: .76rem; font-weight: 700;
+}
+.when-none { font-size: .74rem; color: var(--amber); font-weight: 600; }
+
+/* ---------- icon view ---------- */
+
+.docgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; }
+@media (min-width: 560px) { .docgrid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 820px) { .docgrid { grid-template-columns: repeat(4, 1fr); } }
+
+.doctile {
+  display: flex; flex-direction: column; gap: 4px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 12px 11px; cursor: pointer; min-height: 112px;
+}
+.doctile:active { background: var(--surface-2); transform: scale(.985); }
+.doctile-name { font-weight: 700; font-size: .9rem; line-height: 1.25; }
+.doctile-area { color: var(--muted); font-size: .74rem; }
+.doctile-when {
+  margin-top: auto; align-self: flex-start;
+  background: rgba(13,148,136,.16); color: var(--teal-600);
+  border-radius: 999px; padding: 3px 9px; font-size: .74rem; font-weight: 700;
+}
+.doctile-when.none { background: rgba(180,83,9,.14); color: var(--amber); }
+.doctile-mk { min-height: 16px; font-size: .8rem; }
+
+/* ---------- filters ---------- */
+
+.filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+select, input[type="text"], input[type="tel"], input[type="time"], textarea {
+  width: 100%; min-height: var(--tap); padding: 8px 11px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: 11px; outline: 0; font: inherit;
+}
+select:focus, input:focus, textarea:focus { border-color: var(--teal-600); box-shadow: 0 0 0 3px rgba(13,148,136,.16); }
+textarea { min-height: 84px; resize: vertical; line-height: 1.4; }
+
+.field { margin-bottom: 11px; }
+.field > label { display: block; font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 5px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+
+/* ---------- list group headers ---------- */
+
+.grouphead {
+  display: flex; align-items: center; gap: 8px;
+  margin: 16px 2px 8px; font-size: .78rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .07em; color: var(--muted);
+}
+.grouphead::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+details.anyblock { margin-top: 14px; }
+details.anyblock > summary {
+  cursor: pointer; padding: 12px 14px; list-style: none;
+  background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius);
+  font-weight: 650; font-size: .9rem; color: var(--muted);
+}
+details.anyblock > summary::-webkit-details-marker { display: none; }
+details.anyblock[open] > summary { margin-bottom: 9px; }
+
+/* ---------- day-picker (slot editor) ---------- */
+
+/* Day chips — every day is on screen and each one toggles independently, so a
+   doctor can be Tue + Thu, or Mon + Wed + Sat. */
+.daypick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+@media (min-width: 480px) { .daypick { grid-template-columns: repeat(8, 1fr); } }
+
+.daychip-pick {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 42px; padding: 0 6px;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: var(--surface); color: var(--chip-text);
+  font-size: .82rem; font-weight: 650; cursor: pointer;
+  user-select: none; text-align: center;
+}
+.daychip-pick input {
+  position: absolute; opacity: 0; width: 100%; height: 100%;
+  margin: 0; cursor: pointer;
+}
+.daychip-pick.on {
+  background: var(--teal); border-color: var(--teal); color: #fff;
+}
+.daychip-pick.wide { grid-column: span 4; }
+@media (min-width: 480px) { .daychip-pick.wide { grid-column: span 8; } }
+.daychip-pick:active { transform: scale(.96); }
+
+.slotrow {
+  display: grid; gap: 9px;
+  padding: 10px; margin-bottom: 8px;
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px;
+}
+.slotmeta { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+.slotrow .del {
+  min-width: 42px; height: 42px; border: 0; border-radius: 10px;
+  background: transparent; color: var(--rose); font-size: 1.3rem; cursor: pointer;
+}
+
+/* A titled block inside a form — used for the days-and-time editor. */
+.formgroup {
+  margin: 16px 0 12px; padding: 12px;
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.formgroup-head {
+  margin: 0 0 4px; font-size: .82rem; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+}
+.formgroup .slotrow { background: var(--surface); }
+
+/* ---------- detail page ---------- */
+
+.detail-head {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 16px; margin-bottom: 14px;
+}
+.detail-head h1 { margin: 0 0 4px; font-size: 1.25rem; line-height: 1.25; }
+.detail-head .sub { color: var(--muted); font-size: .92rem; }
+
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin-top: 12px; font-size: .92rem; }
+.kv dt { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; align-self: center; }
+.kv dd { margin: 0; }
+
+.visitlog { list-style: none; margin: 0; padding: 0; }
+.visitlog li {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+  padding: 9px 0; border-bottom: 1px solid var(--border); font-size: .9rem;
+}
+.visitlog li:last-child { border-bottom: 0; }
+.visitlog .vdate { font-weight: 650; white-space: nowrap; }
+.visitlog .vnote { color: var(--muted); }
+.visitlog .vdel { border: 0; background: transparent; color: var(--rose); cursor: pointer; font-size: 1.1rem; }
+
+/* ---------- visiting card photo ---------- */
+
+.cardshot {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 12px;
+}
+.cardshot img {
+  display: block; width: 100%; height: auto; max-height: 46vh;
+  object-fit: contain; border-radius: 10px; background: var(--surface-2);
+  cursor: zoom-in;
+}
+.cardshot .hint { text-align: center; margin-bottom: 0; }
+.cardshot-form { margin-bottom: 14px; padding: 0; border: 0; box-shadow: none; background: transparent; }
+.cardshot-form img { max-height: 34vh; border: 1px solid var(--border); }
+
+.tag.card { background: rgba(79,70,229,.14); color: var(--indigo); }
+
+/* Full-screen viewer — pinch-zoom works on the image itself. */
+.lightbox {
+  position: fixed; inset: 0; z-index: 90;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(2,6,23,.92); padding: 16px;
+}
+.lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
+.lightbox .close {
+  position: absolute; top: calc(12px + env(safe-area-inset-top)); right: 14px;
+  min-width: var(--tap); height: var(--tap); border: 0; border-radius: 12px;
+  background: rgba(255,255,255,.18); color: #fff; font-size: 1.5rem; cursor: pointer;
+}
+
+.busy { text-align: center; padding: 18px; color: var(--muted); font-size: .9rem; }
+
+.camwrap { margin-bottom: 12px; }
+.camwrap video {
+  display: block; width: 100%; max-height: 52vh;
+  background: #000; border-radius: 12px; object-fit: contain;
+}
+.camwrap .hint { text-align: center; margin-bottom: 0; }
+
+/* Scan button gets a lighter fill so it reads as the primary way in. */
+.icon-btn.scan { background: rgba(255,255,255,.30); font-size: 1.15rem; }
+.icon-btn.scan:active { background: rgba(255,255,255,.45); }
+
+.ocrbar {
+  height: 8px; border-radius: 999px; background: var(--chip);
+  overflow: hidden; margin: 4px 0 2px;
+}
+.ocrbar-fill {
+  height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--teal-600), var(--indigo));
+  transition: width .25s ease;
+}
+
+.okbox {
+  background: rgba(21,128,61,.12); border: 1px solid rgba(21,128,61,.3);
+  border-radius: 12px; padding: 11px 13px; font-size: .87rem; margin-bottom: 12px;
+}
+
+.linkbtn {
+  border: 0; background: none; color: var(--rose);
+  font-size: .84rem; font-weight: 600; text-decoration: underline;
+  cursor: pointer; padding: 6px;
+}
+
+/* ---------- empty / hint ---------- */
+
+.empty {
+  text-align: center; padding: 34px 18px; color: var(--muted);
+  background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius);
+}
+.empty h3 { margin: 0 0 6px; color: var(--text); font-size: 1.05rem; }
+.empty p { margin: 0 0 14px; font-size: .92rem; }
+
+.hint { font-size: .82rem; color: var(--muted); margin-top: 6px; }
+.warnbox {
+  background: rgba(180,83,9,.12); border: 1px solid rgba(180,83,9,.3);
+  border-radius: 12px; padding: 11px 13px; font-size: .87rem; margin-bottom: 12px;
+}
+
+/* ---------- data screen ---------- */
+
+.preview { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.preview table { border-collapse: collapse; width: 100%; font-size: .8rem; white-space: nowrap; }
+.preview th, .preview td { padding: 7px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+.preview th { background: var(--surface-2); font-weight: 700; position: sticky; top: 0; }
+
+.maprow { display: grid; grid-template-columns: 120px 1fr; gap: 9px; align-items: center; margin-bottom: 8px; }
+.maprow > span { font-size: .82rem; font-weight: 650; color: var(--muted); }
+
+/* ---------- bottom nav ---------- */
+
+/* Seven tabs have to fit a 360px phone, so the labels shrink rather than wrap. */
+.bottomnav {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  background: var(--surface); border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.bottomnav a {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; min-height: 58px; padding: 0 1px;
+  font-size: .58rem; font-weight: 600; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+}
+.bottomnav a span:last-child { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.bottomnav a.active { color: var(--teal-600); }
+.bottomnav .nav-ico { font-size: 1.05rem; line-height: 1; }
+@media (min-width: 420px) {
+  .bottomnav a { font-size: .64rem; }
+  .bottomnav .nav-ico { font-size: 1.15rem; }
+}
+
+/* ---------- toast ---------- */
+
+.toast {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(78px + env(safe-area-inset-bottom)); z-index: 60;
+  background: #0f172a; color: #fff; padding: 10px 18px; border-radius: 999px;
+  font-size: .88rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,.3);
+  max-width: calc(100vw - 32px); text-align: center;
+}
+html[data-theme="dark"] .toast { background: #e2e8f0; color: #0f172a; }
+
+/* ---------- modal ---------- */
+
+.modal { position: fixed; inset: 0; z-index: 70; display: flex; align-items: flex-end; justify-content: center; }
+@media (min-width: 620px) { .modal { align-items: center; } }
+
+.modal-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,.55); }
+.modal-card {
+  position: relative; width: 100%; max-width: 560px; max-height: 92vh;
+  display: flex; flex-direction: column;
+  background: var(--bg); border-radius: 18px 18px 0 0; box-shadow: 0 -8px 40px rgba(0,0,0,.35);
+}
+@media (min-width: 620px) { .modal-card { border-radius: 18px; } }
+
+.modal-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 12px 14px; border-bottom: 1px solid var(--border);
+  background: var(--surface); border-radius: 18px 18px 0 0;
+}
+.modal-head h2 { margin: 0; font-size: 1.05rem; }
+.modal-head .icon-btn { background: var(--chip); color: var(--text); }
+.modal-body { padding: 14px; overflow-y: auto; padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
+
+/* ---------- misc ---------- */
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+/* ---------- contact types: doctor / medical / distributor ---------- */
+
+.tbadge {
+  display: inline-block; margin-right: 6px;
+  border-radius: 999px; padding: 1px 8px;
+  font-size: .7rem; font-weight: 700; white-space: nowrap;
+}
+.tbadge.t-doctor      { background: rgba(13,148,136,.16); color: var(--teal-600); }
+.tbadge.t-medical     { background: rgba(217,119,6,.16);  color: var(--amber); }
+.tbadge.t-distributor { background: rgba(79,70,229,.16);  color: var(--indigo); }
+
+.doctile .tbadge { align-self: flex-start; }
+
+/* Type filter chips on the list screen. */
+.typechips { display: flex; gap: 6px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 2px; }
+.tchip {
+  flex: none; display: inline-flex; align-items: center; gap: 5px;
+  min-height: 36px; padding: 0 12px;
+  border: 1px solid var(--border); border-radius: 999px;
+  background: var(--surface); color: var(--chip-text);
+  font-size: .82rem; font-weight: 650; cursor: pointer; white-space: nowrap;
+}
+.tchip em { font-style: normal; opacity: .65; font-size: .76rem; }
+.tchip.on { background: var(--teal); border-color: var(--teal); color: #fff; }
+.tchip.on em { opacity: .85; }
+
+/* Type picker inside the form. */
+.typepick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.typeopt {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  min-height: 62px; padding: 6px 4px; text-align: center; line-height: 1.35;
+  border: 1px solid var(--border); border-radius: 12px;
+  background: var(--surface); font-size: .78rem; font-weight: 650; cursor: pointer;
+}
+.typeopt input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.typeopt.on { background: var(--teal); border-color: var(--teal); color: #fff; }
+.typeopt:active { transform: scale(.97); }
